@@ -27,12 +27,14 @@ int main ()
         //读取风险地区
         for(int k = 0; k < r; ++k) {
             scanf("%d", &p);
-            //连续的情况
-            if(risk[p].second >= i-1) {// 注意这里是i-1
-                risk[p].second = i+6;
-            } else { //不连续的情况
-                risk[p].first = i; // 不然的话 重置日期
-                risk[p].second = i+6;
+            if(risk.find(p) == risk.end()) {
+                risk[p] = {i, i+6};
+            } else {
+                if(i <= risk[p].second + 1) {
+                    risk[p].second = i + 6;
+                } else {
+                    risk[p] = {i, i+6};
+                }
             }
         }
         
