@@ -10,11 +10,6 @@ typedef struct info {
     int d, u, ri;
 } info;
 
-/*
-重写撰写代码 
-pair<int, int> 含义是 开始时间 结束时间
-*/
-
 int main ()
 {
     int n;
@@ -34,7 +29,7 @@ int main ()
             scanf("%d", &p);
             //连续的情况
             if(risk[p].second >= i-1) {// 注意这里是i-1
-                risk[p].second += 6;
+                risk[p].second = i+6;
             } else { //不连续的情况
                 risk[p].first = i; // 不然的话 重置日期
                 risk[p].second = i+6;
@@ -45,7 +40,8 @@ int main ()
         for(int k = 0; k < m; ++k) {
             scanf("%d %d %d", &d, &u, &ri);
             //记录到对应天中
-            before[i].push_back({d, u, ri}); 
+            if(d <= i)
+                before[i].push_back({d, u, ri}); 
         }
         s.clear();
         //判断哪些用户是危险的
@@ -55,8 +51,9 @@ int main ()
                 //这里这么写的话 会出现risk自动创建的情况 这不是我希望见到的
                 if(j->d+6 >= i 
                     && risk.find(j->ri) != risk.end() 
-                    &&risk[j->ri].first <= j->d && j->d <= risk[j->ri].second
-                    && risk[j->ri].second >= i) {
+                    && risk[j->ri].first <= j->d && j->d <= risk[j->ri].second
+                    && risk[j->ri].second >= i
+                    && j->d <= i) {
                     s.insert(j->u);
                 }
             }
