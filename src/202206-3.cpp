@@ -32,7 +32,6 @@ bool canDo(Role& role, string& op, string& res_type, string& res_name) {
 			break;
 		}
 	}
-	cout << "cando 1" << endl;
 	if(flag) return false;
 	flag = true;
 	//判断资源种类
@@ -42,21 +41,17 @@ bool canDo(Role& role, string& op, string& res_type, string& res_name) {
 			break;
 		}
 	}
-	cout << "cando 2" << endl;
 	if(flag) return false;
 	flag = true;
 	//判断资源名称
 	if(role.res_name.size() == 0) return true; //空数组的情况
 	for(string& _res_name: role.res_name) {
 		if(_res_name.compare(res_name) == 0) {
-			cout << "_res_name" << _res_name << "res_name" << res_name << endl;
 			flag = false;
 			break;
 		}
 	}
-	cout << "cando 3" << endl;
 	if(flag) return false;
-	cout << "why you try!" << endl;
 	return true;
 }
 //对于用户名称为user_name 所属的组为groups 
@@ -67,7 +62,6 @@ bool check(string& user_name, vector<string>& groups,
 	for(auto& _conn: conns) {
 		if(_conn.second.user.find(user_name) != _conn.second.user.end()) {
 			bool b = canDo(roles[_conn.first], op, res_type, res_name);
-			cout << b << endl;
 			if(b)
 				return true;
 		}
@@ -77,7 +71,6 @@ bool check(string& user_name, vector<string>& groups,
 		for(string& _group: groups) {
 			if(_conn.second.group.find(_group) != _conn.second.group.end()) {
 				bool b = canDo(roles[_conn.first], op, res_type, res_name);
-				cout << b << endl;
 				if(b)
 					return true;
 			}
@@ -90,7 +83,6 @@ bool check(string& user_name, vector<string>& groups,
 int main () {
 	int n, m, q;//角色数量 角色关联数量 待检查的操作数量
 	scanf("%d %d %d", &n, &m, &q);
-	printf("读入nmq成功\n");
 	for(int i = 0; i < n; ++i) {
 		string name;
 		string s;
@@ -119,38 +111,15 @@ int main () {
 		roles[name] = role;
 	}
 
-	cout << endl;
-	cout << "roles" << endl;
-	for(auto& _role: roles) {
-		cout << _role.first << endl;
-		for(auto& i: _role.second.ops) {
-			cout << i << endl;
-		}
-		cout << "res_type" << endl;
-		for(auto& i: _role.second.res_type) {
-			cout << i << endl;
-		}
-		cout << "res_name" << endl;
-		for(auto& i: _role.second.res_name) {
-			cout << i << endl;
-		}
-	}
-	cout << endl;
-
 	for(int i = 0; i < m; ++i) {
 		string name;
 		int ns;
 		Conn conn;
 		cin >> name >> ns;
-		cout << "name:" << name << endl;
-		cout << "ns:" << ns << endl;
-		
 		//读取角色关联
 		for(int j = 0; j < ns; ++j) {
 			string type, s;
 			cin >> type >> s;
-			cout << "type:" << type << endl;
-			cout << "s:" << s << endl;
 			if(strcmp(type.c_str(), "u") == 0) {
 				if(conns.find(name) == conns.end())
 					conn.user.insert(s);
@@ -169,21 +138,6 @@ int main () {
 			conns[name] = conn;
 		//conns不能用map 因为有多重映射 不对 应该是用map 但是需要关联前后数据
 	}
-
-	cout << endl;
-	cout << "conns" << endl;
-	for(auto& _conn: conns) {
-		cout << _conn.first << endl;
-		for(auto& i: _conn.second.user) {
-			cout << i << endl;
-		}
-		cout << "group" << _conn.second.group.size() <<endl;
-		for(auto& i: _conn.second.group) {
-			cout << i << endl;
-		}
-	}
-	cout << endl;
-
 	while(q--) {
 		string user_name;
 		vector<string> groups;
@@ -195,17 +149,9 @@ int main () {
 			cin >> s;
 			groups.push_back(s);	
 		}
-		cout << "group" << endl;
-		for(string& s:groups) {
-			cout << s << " ";
-		}
-		cout << endl;
 		//将要执行的操作 资源种类 资源名称
 		string op, res_type, res_name;
 		cin >> op >> res_type >> res_name;
-		cout << "op:" << op << endl;
-		cout << "res_type:" << res_type << endl;
-		cout << "res_name:" << res_name << endl;
 		//判断是否可以执行操作
 		if(check(user_name, groups, op, res_type, res_name)) {
 			printf("1");
