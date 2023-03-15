@@ -9,9 +9,9 @@
 using namespace std;
 
 typedef struct info{
-	vector<string> ops;
-	vector<string> res_type;
-	vector<string> res_name;
+	set<string> ops;
+	set<string> res_type;
+	set<string> res_name;
 }Role;
 
 typedef struct connection {
@@ -26,7 +26,7 @@ map<string, Conn> conns;//角色名对应 可被授权的组信息
 bool canDo(Role& role, string& op, string& res_type, string& res_name) {
 	bool flag = true;
 	//判断操作
-	for(string& _op: role.ops) {
+	for(const string& _op: role.ops) {
 		if(_op.compare("*") == 0 || _op.compare(op) == 0) {
 			flag = false;
 			break;
@@ -35,7 +35,7 @@ bool canDo(Role& role, string& op, string& res_type, string& res_name) {
 	if(flag) return false;
 	flag = true;
 	//判断资源种类
-	for(string& _res_type: role.res_type) {
+	for(const string& _res_type: role.res_type) {
 		if(_res_type.compare("*") == 0 || _res_type.compare(res_type) == 0) {
 			flag = false;
 			break;
@@ -45,7 +45,7 @@ bool canDo(Role& role, string& op, string& res_type, string& res_name) {
 	flag = true;
 	//判断资源名称
 	if(role.res_name.size() == 0) return true; //空数组的情况
-	for(string& _res_name: role.res_name) {
+	for(const string& _res_name: role.res_name) {
 		if(_res_name.compare(res_name) == 0) {
 			flag = false;
 			break;
@@ -81,6 +81,7 @@ bool check(string& user_name, vector<string>& groups,
 }
 
 int main () {
+	cin.tie(0);
 	int n, m, q;//角色数量 角色关联数量 待检查的操作数量
 	scanf("%d %d %d", &n, &m, &q);
 	for(int i = 0; i < n; ++i) {
@@ -94,48 +95,45 @@ int main () {
 		scanf("%d", &nv);
 		while(nv--) {
 			cin >> s;
-			role.ops.push_back(s);
+			role.ops.insert(s);
 		}
 		//资源种类
 		scanf("%d", &no);
 		while(no--) {
 			cin >> s;
-			role.res_type.push_back(s);
+			role.res_type.insert(s);
 		}
 		//资源名称
 		scanf("%d", &nn);
 		while(nn--) {
 			cin >> s;
-			role.res_name.push_back(s);
+			role.res_name.insert(s);
 		}
 		roles[name] = role;
 	}
-
+	
 	for(int i = 0; i < m; ++i) {
 		string name;
 		int ns;
-		Conn conn;
+		Conn* conn;
 		cin >> name >> ns;
+		if(conns.find(name) == conns.end()) {
+			conn = new Conn();
+		} else {
+			conn = &(conns[name]);
+		}
 		//读取角色关联
 		for(int j = 0; j < ns; ++j) {
 			string type, s;
 			cin >> type >> s;
 			if(strcmp(type.c_str(), "u") == 0) {
-				if(conns.find(name) == conns.end())
-					conn.user.insert(s);
-				else {
-					conns[name].user.insert(s);
-				}
+				conn->user.insert(s);
 			} else {
-				if(conns.find(name) == conns.end()) {
-					conn.group.insert(s);
-				} else {
-					conns[name].group.insert(s);
-				}
+				conn->group.insert(s);
 			}
 		}
 		if(conns.find(name) == conns.end())
-			conns[name] = conn;
+			conns[name] = *conn;
 		//conns不能用map 因为有多重映射 不对 应该是用map 但是需要关联前后数据
 	}
 	while(q--) {
