@@ -34,6 +34,7 @@ bool canDo(Role& role, string& op, string& res_type, string& res_name) {
 	}
 	cout << "cando 1" << endl;
 	if(flag) return false;
+	flag = true;
 	//判断资源种类
 	for(string& _res_type: role.res_type) {
 		if(_res_type.compare("*") == 0 || _res_type.compare(res_type) == 0) {
@@ -43,11 +44,14 @@ bool canDo(Role& role, string& op, string& res_type, string& res_name) {
 	}
 	cout << "cando 2" << endl;
 	if(flag) return false;
+	flag = true;
 	//判断资源名称
 	if(role.res_name.size() == 0) return true; //空数组的情况
 	for(string& _res_name: role.res_name) {
 		if(_res_name.compare(res_name) == 0) {
+			cout << "_res_name" << _res_name << "res_name" << res_name << endl;
 			flag = false;
+			break;
 		}
 	}
 	cout << "cando 3" << endl;
