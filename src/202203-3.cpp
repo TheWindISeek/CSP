@@ -6,42 +6,10 @@
 #include <vector>
 
 using namespace std;
-/*
-	在选定计算节点后，该任务对计算节点的要求就不再被考虑
-	即使新安排的计算任务使得此前已有的计算任务的要求被违反，也是合法的。
-
-	计算任务必须在指定可用区上运行。
-	计算任务必须和指定应用的计算任务在同一可用区上运行。
-		该要求对计算任务可以运行的可用区添加了限制。
-		不考虑该任务本身，一个可用区若运行有指定应用的任务，则满足要求。
-	计算任务不能和指定应用的计算任务在同一个计算节点上运行。
-		该要求对计算任务可以运行的计算节点添加了限制。
-		一个计算节点若运行有指定应用的任务，则不满足要求。
-		必须满足 尽量满足 必须二选一
-
-	执行过程
-		过滤过程
-			先根据计算任务的要求 过滤所有满足要求的计算节点
-			如果不存在 && 指定了计算任务反亲和性 && 尽量满足反亲和性
-				去掉反亲和性
-				过滤
-				如果不存在
-					return false
-				如果存在
-					return true
-			不然
-				return true
-		排序过程
-			将过滤后的节点按照 
-				1.运行计算任务最少的节点
-				2.编号最小的节点
-*/
-
 set<int> zones[1003];//每个区域的计算节点
 multiset<int> nodes[1003];//每个计算节点上跑的应用
 
 bool cmp (int x, int y) {
-	//cout << "\tx:"<<x <<"\tnodes[x]:"<<nodes[x].size()<< "\ty:" << y << "\tnodes[y]:" << nodes[y].size()<<endl;
 	if(nodes[x].size() != nodes[y].size()) {
 		return nodes[x].size() < nodes[y].size();
 	}
@@ -85,14 +53,6 @@ int main () {
 	scanf("%d", &g);
 	for(int i = 1; i <= g; ++i) {
 		int fi, ai, nai, pai, paai, paari;
-		/*
-		fi 接连要启动的任务
-		ai 表示fi个计算任务所属应用的编号 0< ai <=Amax
-		nai 0 任意区域 >0 nai区
-		pai 0 无所谓 >0 必须和pai在同一区 编号看之前的ai
-		paai 0 没有 >0 不能和paai在一个计算节点上运行
-		paari 0 尽量满足 1 必须满足
-		*/
 		scanf("%d %d %d %d %d %d", &fi, &ai, &nai, &pai, &paai, &paari);
   		
   		while(fi--) {
@@ -108,22 +68,6 @@ int main () {
   					getNodes(presult, i, pai);
   				}
   			}
-  			/*
-  			//此时我们得到了满足了nai pai条件的计算节点
-  			cout << "\n中间结果" << endl;
-  			for(int i: presult) {
-  				cout << i << endl;
-  			}
-  			cout << "以下为当前节点中的所有可能" << endl;
-  			for(int node: presult) {
-  				printf("%d ", node);
-  				for(int i: nodes[node]) {
-  					printf("%4d", i);
-  				}
-  				cout << endl;
-  			}
-  			cout << "\n中间结果输出完成" << endl;
-  			*/
   			//如果还指定了paai 那么我们就需要从result中删去一些节点
   			if(paai != 0) {
   				// 11 3 0 1 3 0
@@ -157,20 +101,6 @@ int main () {
   				nodes[result[0]].insert(ai);
   			}
   			printf(" ");
-  			/*
-	  		// 查看所有分区的应用数
-	  		cout << endl;
-	  		for(int i = 1; i <= m; ++i) {
-	  			cout << "第"<<i<<"分区" << endl;
-	  			for(int j: zones[i]) {
-	  				cout << "\n节点"<< j << endl;
-	  				for(int k: nodes[j]) {
-	  					printf("%4d", k);
-	  				}
-	  			}
-	  			cout << endl;
-	  		}
-	  		*/  			
   		}
   		printf("\n");
 
