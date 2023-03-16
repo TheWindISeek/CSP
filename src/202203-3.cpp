@@ -38,9 +38,10 @@ using namespace std;
 */
 
 set<int> zones[1003];//每个区域的计算节点
-set<int> nodes[1003];//每个计算节点上跑的应用
+multiset<int> nodes[1003];//每个计算节点上跑的应用
 
 bool cmp (int x, int y) {
+	//cout << "\tx:"<<x <<"\tnodes[x]:"<<nodes[x].size()<< "\ty:" << y << "\tnodes[y]:" << nodes[y].size()<<endl;
 	if(nodes[x].size() != nodes[y].size()) {
 		return nodes[x].size() < nodes[y].size();
 	}
@@ -52,12 +53,24 @@ void getNodes(set<int> &result, int nai, int pai) {
 	if(zones[nai].size() == 0) {
 		return;
 	}
-	for(int node: zones[nai]) {
-		//如果当前区域上的某个计算节点找得到应用编号pai 或者 之前的应用编号为0
-		if(pai == 0 || nodes[node].find(pai) != nodes[node].end()) {
-			result.insert(node);
+	int flag = true;
+	if(pai != 0) {
+		for(int node: zones[nai]) {
+			//如果当前区域上的某个计算节点找得到应用编号pai 或者 之前的应用编号为0
+			if(nodes[node].find(pai) != nodes[node].end()) {
+				flag = false;
+				break;
+			}
 		}
+	} else {
+		flag = false;
 	}
+	if(flag) return;
+	//如果当前可用区符合要求 添加所有节点
+	for(int node: zones[nai]) {
+		result.insert(node);
+	}
+
 }
 
 int main () {
@@ -95,9 +108,25 @@ int main () {
   					getNodes(presult, i, pai);
   				}
   			}
+  			/*
   			//此时我们得到了满足了nai pai条件的计算节点
+  			cout << "\n中间结果" << endl;
+  			for(int i: presult) {
+  				cout << i << endl;
+  			}
+  			cout << "以下为当前节点中的所有可能" << endl;
+  			for(int node: presult) {
+  				printf("%d ", node);
+  				for(int i: nodes[node]) {
+  					printf("%4d", i);
+  				}
+  				cout << endl;
+  			}
+  			cout << "\n中间结果输出完成" << endl;
+  			*/
   			//如果还指定了paai 那么我们就需要从result中删去一些节点
   			if(paai != 0) {
+  				// 11 3 0 1 3 0
   				for(int node: presult) {
   					//如果没有冲突的话
   					if(nodes[node].find(paai) == nodes[node].end()) {
@@ -113,6 +142,10 @@ int main () {
   						}
   					}
   				}
+  			} else {//没有指定 我们直接把这个当最后的结果
+  				for(int node: presult) {
+  					result.push_back(node);
+  				}
   			}
   			//输出最后的结果
   			if(result.size() == 0) {
@@ -120,10 +153,28 @@ int main () {
   			} else {
   				sort(result.begin(), result.end(), cmp);
   				printf("%d", result[0]);
+  				//给计算节点分配计算任务
+  				nodes[result[0]].insert(ai);
   			}
   			printf(" ");
+  			/*
+	  		// 查看所有分区的应用数
+	  		cout << endl;
+	  		for(int i = 1; i <= m; ++i) {
+	  			cout << "第"<<i<<"分区" << endl;
+	  			for(int j: zones[i]) {
+	  				cout << "\n节点"<< j << endl;
+	  				for(int k: nodes[j]) {
+	  					printf("%4d", k);
+	  				}
+	  			}
+	  			cout << endl;
+	  		}
+	  		*/  			
   		}
   		printf("\n");
+
+
 	}
 	return 0;
 }
